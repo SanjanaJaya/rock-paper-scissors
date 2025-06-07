@@ -4,21 +4,25 @@ import 'package:flutter/material.dart';
 class GameConstants {
   // Colors
   static const Color backgroundColor = Color(0xFF1E1E1E);
-  static const Color gameBackgroundColor = Color(0xFF2A2A2A);
+  static const Color gameBackgroundColor = Colors.transparent;
   static const Color textColor = Color(0xFFFFFFFF);
-  static const Color buttonColor = Color(0xFF4A4A4A);
-  static const Color highlightColor = Color(0xFF00FF88);
-  static const Color menuButtonColor = Color(0xFF3A3A3A);
-  static const Color menuTextColor = Color(0xFFFFFFFF);
+  static const Color buttonColor = Color(0xAAFFFFFF); // Semi-transparent white
+  static const Color highlightColor = Color(0xFFFFD700); // Gold
+  static const Color menuButtonColor = Color(0xAAFFFFFF);
+  static const Color menuTextColor = Color(0xFF000000);
+  static const Color resultTextColor = Color(0xFFFFD700);
+  static const Color winColor = Color(0xFF00FF00);
+  static const Color loseColor = Color(0xFFFF0000);
 
   // Sizes
-  static const double buttonWidth = 120;
-  static const double buttonHeight = 120;
+  static const double buttonWidth = 100;
+  static const double buttonHeight = 100;
   static const double menuButtonWidth = 250;
   static const double menuButtonHeight = 60;
-  static const double choiceAnimationSize = 200;
+  static const double choiceAnimationSize = 180;
 
   // Assets
+  static const String backgroundAsset = 'background.png';
   static const String rockAsset = 'rock.png';
   static const String paperAsset = 'paper.png';
   static const String scissorsAsset = 'scissors.png';

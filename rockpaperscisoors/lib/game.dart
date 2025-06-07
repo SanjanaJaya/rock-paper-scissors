@@ -1,3 +1,4 @@
+// game.dart
 import 'dart:async';
 import 'dart:math';
 
@@ -18,7 +19,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   late TextComponent computerChoiceText;
   late TextComponent gameStatusText;
   late TextComponent restartText;
-  late RectangleComponent gameBackground;
+  late SpriteComponent background;
   late RectangleComponent restartArea;
 
   int playerScore = 0;
@@ -41,57 +42,71 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   Future<void> onLoad() async {
     await super.onLoad();
 
-    // Add game background
-    gameBackground = RectangleComponent(
-      size: Vector2(size.x, size.y * 0.7),
-      position: Vector2(0, size.y * 0.15),
-      paint: Paint()..color = GameConstants.gameBackgroundColor,
+    // Add background image
+    background = SpriteComponent(
+      sprite: await Sprite.load(GameConstants.backgroundAsset),
+      size: size,
     );
-    add(gameBackground);
+    add(background);
 
     // Add buttons
-    final buttonSpacing = size.x / 4;
-    final startY = size.y * 0.8;
+    final buttonSpacing = size.x / 6;
+    final startY = size.y * 0.85;
+    final buttonYOffset = 20.0;
 
     add(ChoiceButton(
       choice: GameChoice.rock,
       onPressed: () => makeChoice(GameChoice.rock),
-      position: Vector2(buttonSpacing - GameConstants.buttonWidth/2, startY),
+      position: Vector2(buttonSpacing * 2 - GameConstants.buttonWidth/2, startY - buttonYOffset),
     ));
 
     add(ChoiceButton(
       choice: GameChoice.paper,
       onPressed: () => makeChoice(GameChoice.paper),
-      position: Vector2(buttonSpacing * 2 - GameConstants.buttonWidth/2, startY),
+      position: Vector2(buttonSpacing * 3 - GameConstants.buttonWidth/2, startY - buttonYOffset),
     ));
 
     add(ChoiceButton(
       choice: GameChoice.scissors,
       onPressed: () => makeChoice(GameChoice.scissors),
-      position: Vector2(buttonSpacing * 3 - GameConstants.buttonWidth/2, startY),
+      position: Vector2(buttonSpacing * 4 - GameConstants.buttonWidth/2, startY - buttonYOffset),
     ));
 
     // Add score texts
     playerScoreText = TextComponent(
       text: 'YOU: $playerScore',
-      position: Vector2(50, size.y * 0.2),
+      position: Vector2(40, 40),
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 24,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
       ),
     );
 
     computerScoreText = TextComponent(
       text: 'AI: $computerScore',
-      position: Vector2(size.x - 100, size.y * 0.2),
+      position: Vector2(size.x - 80, 40),
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 24,
+          fontSize: 28,
           fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
       ),
     );
@@ -99,12 +114,20 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Game status text
     gameStatusText = TextComponent(
       text: 'First to $winningScore wins!',
-      position: Vector2(size.x / 2, size.y * 0.1),
+      position: Vector2(size.x / 2, 80),
       anchor: Anchor.center,
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.highlightColor,
-          fontSize: 20,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
       ),
     );
@@ -114,9 +137,17 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       position: Vector2(size.x / 2, size.y * 0.5),
       anchor: Anchor.center,
       textRenderer: TextPaint(
-        style: const TextStyle(
-          color: GameConstants.textColor,
-          fontSize: 24,
+        style: TextStyle(
+          color: GameConstants.resultTextColor,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
       ),
     );
@@ -124,24 +155,40 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Player and Computer choice display
     playerChoiceText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y * 0.7),
+      position: Vector2(size.x / 2, size.y * 0.65),
       anchor: Anchor.center,
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 20,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
       ),
     );
 
     computerChoiceText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y * 0.3),
+      position: Vector2(size.x / 2, size.y * 0.35),
       anchor: Anchor.center,
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 20,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
       ),
     );
@@ -149,12 +196,20 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Restart instruction text
     restartText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y - 50),
+      position: Vector2(size.x / 2, size.y - 40),
       anchor: Anchor.center,
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.highlightColor,
-          fontSize: 18,
+          fontSize: 22,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
         ),
       ),
     );
@@ -198,7 +253,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       final playerStar = SpriteComponent(
         sprite: await Sprite.load(GameConstants.emptyStarAsset),
         size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.6),
+        position: Vector2(startX + i * starSpacing, size.y * 0.15),
       );
       playerStars.add(playerStar);
       add(playerStar);
@@ -206,7 +261,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       final computerStar = SpriteComponent(
         sprite: await Sprite.load(GameConstants.emptyStarAsset),
         size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.4),
+        position: Vector2(startX + i * starSpacing, size.y * 0.25),
       );
       computerStars.add(computerStar);
       add(computerStar);
@@ -267,29 +322,50 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         playerScore++;
         resultText.text = 'You win this round!';
         resultText.textRenderer = TextPaint(
-          style: const TextStyle(
-            color: GameConstants.highlightColor,
-            fontSize: 24,
+          style: TextStyle(
+            color: GameConstants.winColor,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 5,
+                offset: Offset(2, 2),
+              ),
+            ],
           ),
         );
       } else if (result == -1) {
         computerScore++;
         resultText.text = 'AI wins this round!';
         resultText.textRenderer = TextPaint(
-          style: const TextStyle(
-            color: Colors.red,
-            fontSize: 24,
+          style: TextStyle(
+            color: GameConstants.loseColor,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 5,
+                offset: Offset(2, 2),
+              ),
+            ],
           ),
         );
       } else {
         resultText.text = 'It\'s a tie!';
         resultText.textRenderer = TextPaint(
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.yellow,
-            fontSize: 24,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 5,
+                offset: Offset(2, 2),
+              ),
+            ],
           ),
         );
       }
@@ -303,10 +379,17 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         gameEnded = true;
         resultText.text = '🎉 YOU WON THE GAME! 🎉';
         resultText.textRenderer = TextPaint(
-          style: const TextStyle(
-            color: GameConstants.highlightColor,
-            fontSize: 28,
+          style: TextStyle(
+            color: GameConstants.winColor,
+            fontSize: 32,
             fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 5,
+                offset: Offset(2, 2),
+              ),
+            ],
           ),
         );
         gameStatusText.text = 'VICTORY!';
@@ -316,10 +399,17 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         gameEnded = true;
         resultText.text = '💻 AI WINS! 💻';
         resultText.textRenderer = TextPaint(
-          style: const TextStyle(
-            color: Colors.red,
-            fontSize: 28,
+          style: TextStyle(
+            color: GameConstants.loseColor,
+            fontSize: 32,
             fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                color: Colors.black,
+                blurRadius: 5,
+                offset: Offset(2, 2),
+              ),
+            ],
           ),
         );
         gameStatusText.text = 'GAME OVER!';
@@ -353,7 +443,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       size: Vector2.all(GameConstants.choiceAnimationSize),
       position: Vector2(
         size.x / 2 - GameConstants.choiceAnimationSize / 2,
-        isComputer ? size.y * 0.25 : size.y * 0.55,
+        isComputer ? size.y * 0.3 : size.y * 0.6,
       ),
     )..opacity = 0.0
       ..add(OpacityEffect.fadeIn(EffectController(duration: 0.3)));
@@ -371,9 +461,17 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     gameStatusText.text = 'First to $winningScore wins!';
     resultText.text = 'Choose Rock, Paper, or Scissors!';
     resultText.textRenderer = TextPaint(
-      style: const TextStyle(
-        color: GameConstants.textColor,
-        fontSize: 24,
+      style: TextStyle(
+        color: GameConstants.resultTextColor,
+        fontSize: 28,
+        fontWeight: FontWeight.bold,
+        shadows: [
+          Shadow(
+            color: Colors.black,
+            blurRadius: 5,
+            offset: Offset(2, 2),
+          ),
+        ],
       ),
     );
     playerChoiceText.text = '';
