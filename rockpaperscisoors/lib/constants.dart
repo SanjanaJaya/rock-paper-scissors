@@ -4,10 +4,10 @@ class GameConstants {
   static const Color backgroundColor = Color(0xFF1E1E1E);
   static const Color textColor = Color(0xFFFFFFFF);
   static const Color buttonColor = Color(0xFF4A4A4A);
-  static const Color highlightColor = Color(0xFF00FF00);
+  static const Color highlightColor = Color(0xFF00FF88);
 
-  static const double buttonWidth = 150;
-  static const double buttonHeight = 150;
+  static const double buttonWidth = 120;
+  static const double buttonHeight = 120;
 
   static const String rockAsset = 'rock.png';
   static const String paperAsset = 'paper.png';

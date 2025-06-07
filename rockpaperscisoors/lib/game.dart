@@ -11,10 +11,17 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   late TextComponent playerScoreText;
   late TextComponent computerScoreText;
   late TextComponent resultText;
+  late TextComponent playerChoiceText;
+  late TextComponent computerChoiceText;
+  late TextComponent gameStatusText;
+  late TextComponent restartText;
+  late RectangleComponent restartArea;
 
   int playerScore = 0;
   int computerScore = 0;
   final Random _random = Random();
+  bool gameEnded = false;
+  static const int winningScore = 5;
 
   @override
   Color backgroundColor() => GameConstants.backgroundColor;
@@ -25,24 +32,24 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
 
     // Add buttons
     final buttonSpacing = size.x / 4;
-    final startY = size.y / 2;
+    final startY = size.y * 0.6;
 
     add(ChoiceButton(
       choice: GameChoice.rock,
       onPressed: () => makeChoice(GameChoice.rock),
-      position: Vector2(buttonSpacing, startY),
+      position: Vector2(buttonSpacing - GameConstants.buttonWidth/2, startY),
     ));
 
     add(ChoiceButton(
       choice: GameChoice.paper,
       onPressed: () => makeChoice(GameChoice.paper),
-      position: Vector2(buttonSpacing * 2, startY),
+      position: Vector2(buttonSpacing * 2 - GameConstants.buttonWidth/2, startY),
     ));
 
     add(ChoiceButton(
       choice: GameChoice.scissors,
       onPressed: () => makeChoice(GameChoice.scissors),
-      position: Vector2(buttonSpacing * 3, startY),
+      position: Vector2(buttonSpacing * 3 - GameConstants.buttonWidth/2, startY),
     ));
 
     // Add score texts
@@ -53,6 +60,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         style: const TextStyle(
           color: GameConstants.textColor,
           fontSize: 24,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
@@ -64,44 +72,199 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         style: const TextStyle(
           color: GameConstants.textColor,
           fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
+    );
+
+    // Game status text (first to 5 wins)
+    gameStatusText = TextComponent(
+      text: 'First to $winningScore wins!',
+      position: Vector2(size.x / 2, 100),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: GameConstants.highlightColor,
+          fontSize: 20,
         ),
       ),
     );
 
     resultText = TextComponent(
-      text: 'Choose an option!',
-      position: Vector2(size.x / 2, 100),
+      text: 'Choose Rock, Paper, or Scissors!',
+      position: Vector2(size.x / 2, 150),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: const TextStyle(
           color: GameConstants.textColor,
-          fontSize: 32,
+          fontSize: 24,
         ),
       ),
     );
 
+    // Player and Computer choice display
+    playerChoiceText = TextComponent(
+      text: 'You: -',
+      position: Vector2(size.x / 4, 250),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: GameConstants.textColor,
+          fontSize: 20,
+        ),
+      ),
+    );
+
+    computerChoiceText = TextComponent(
+      text: 'Computer: -',
+      position: Vector2(size.x * 3/4, 250),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: GameConstants.textColor,
+          fontSize: 20,
+        ),
+      ),
+    );
+
+    // Restart instruction text (initially hidden)
+    restartText = TextComponent(
+      text: '',
+      position: Vector2(size.x / 2, size.y - 100),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: const TextStyle(
+          color: GameConstants.highlightColor,
+          fontSize: 18,
+        ),
+      ),
+    );
+
+    // Invisible restart area that covers the whole screen
+    restartArea = RectangleComponent(
+      size: size,
+      position: Vector2.zero(),
+      paint: Paint()..color = Colors.transparent,
+    );
+
     add(playerScoreText);
     add(computerScoreText);
+    add(gameStatusText);
     add(resultText);
+    add(playerChoiceText);
+    add(computerChoiceText);
+    add(restartText);
   }
 
   void makeChoice(GameChoice playerChoice) {
+    if (gameEnded) return;
+
     final computerChoice = getRandomChoice();
     final result = determineWinner(playerChoice, computerChoice);
+
+    // Update choice displays
+    playerChoiceText.text = 'You: ${getChoiceName(playerChoice)}';
+    computerChoiceText.text = 'Computer: ${getChoiceName(computerChoice)}';
 
     // Update scores and display result
     if (result == 1) {
       playerScore++;
-      resultText.text = 'You win!';
+      resultText.text = 'You win this round!';
+      resultText.textRenderer = TextPaint(
+        style: const TextStyle(
+          color: GameConstants.highlightColor,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      );
     } else if (result == -1) {
       computerScore++;
-      resultText.text = 'Computer wins!';
+      resultText.text = 'Computer wins this round!';
+      resultText.textRenderer = TextPaint(
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      );
     } else {
       resultText.text = 'It\'s a tie!';
+      resultText.textRenderer = TextPaint(
+        style: const TextStyle(
+          color: Colors.yellow,
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+        ),
+      );
     }
 
     playerScoreText.text = 'Player: $playerScore';
     computerScoreText.text = 'Computer: $computerScore';
+
+    // Check for game end
+    if (playerScore >= winningScore) {
+      gameEnded = true;
+      resultText.text = '🎉 YOU WON THE GAME! 🎉';
+      resultText.textRenderer = TextPaint(
+        style: const TextStyle(
+          color: GameConstants.highlightColor,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+      gameStatusText.text = 'VICTORY!';
+      restartText.text = 'Tap anywhere to play again!';
+      add(RestartButton(onPressed: resetGame, size: size));
+    } else if (computerScore >= winningScore) {
+      gameEnded = true;
+      resultText.text = '💻 COMPUTER WINS! 💻';
+      resultText.textRenderer = TextPaint(
+        style: const TextStyle(
+          color: Colors.red,
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+        ),
+      );
+      gameStatusText.text = 'GAME OVER!';
+      restartText.text = 'Tap anywhere to play again!';
+      add(RestartButton(onPressed: resetGame, size: size));
+    }
+  }
+
+  void resetGame() {
+    playerScore = 0;
+    computerScore = 0;
+    gameEnded = false;
+
+    playerScoreText.text = 'Player: $playerScore';
+    computerScoreText.text = 'Computer: $computerScore';
+    gameStatusText.text = 'First to $winningScore wins!';
+    resultText.text = 'Choose Rock, Paper, or Scissors!';
+    resultText.textRenderer = TextPaint(
+      style: const TextStyle(
+        color: GameConstants.textColor,
+        fontSize: 24,
+      ),
+    );
+    playerChoiceText.text = 'You: -';
+    computerChoiceText.text = 'Computer: -';
+    restartText.text = '';
+
+    // Remove any restart buttons
+    children.whereType<RestartButton>().forEach((button) {
+      button.removeFromParent();
+    });
+  }
+
+  String getChoiceName(GameChoice choice) {
+    switch (choice) {
+      case GameChoice.rock:
+        return '🪨 Rock';
+      case GameChoice.paper:
+        return '📄 Paper';
+      case GameChoice.scissors:
+        return '✂️ Scissors';
+    }
   }
 
   GameChoice getRandomChoice() {
@@ -120,5 +283,24 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       case GameChoice.scissors:
         return computer == GameChoice.paper ? 1 : -1;
     }
+  }
+}
+
+class RestartButton extends RectangleComponent with TapCallbacks {
+  final VoidCallback onPressed;
+
+  RestartButton({
+    required this.onPressed,
+    required Vector2 size,
+  }) : super(
+    size: size,
+    position: Vector2.zero(),
+    paint: Paint()..color = Colors.transparent,
+  );
+
+  @override
+  void onTapDown(TapDownEvent event) {
+    onPressed();
+    super.onTapDown(event);
   }
 }
