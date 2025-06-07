@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:flame/game.dart';
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
-import 'package:rockpaperscisoors/game.dart';
-import 'package:rockpaperscisoors/difficulty_screen.dart';
-import 'package:rockpaperscisoors/constants.dart';
-import 'package:rockpaperscisoors/menu_button.dart';
+import 'game.dart';
+import 'difficulty_screen.dart';
+import 'constants.dart';
+import 'menu_button.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -77,7 +77,6 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
             );
           },
           onMultiPlayer: () {
-            // Placeholder for multiplayer
             ScaffoldMessenger.of(context).showSnackBar(
               const SnackBar(content: Text('Multiplayer mode coming soon!')),
             );
@@ -117,13 +116,11 @@ class _MainMenuGame extends FlameGame {
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-    // Don't add UI components here - wait for layout
   }
 
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
-    // Clear existing components when resizing
     removeAll(children.where((component) =>
     component is TextComponent || component is MenuButton).toList());
     _setupUI();
@@ -132,7 +129,6 @@ class _MainMenuGame extends FlameGame {
   @override
   void onMount() {
     super.onMount();
-    // Setup UI once the game is mounted and has layout
     if (hasLayout) {
       _setupUI();
     }
