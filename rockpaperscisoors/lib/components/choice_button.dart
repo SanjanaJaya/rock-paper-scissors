@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
+import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
-import 'constants.dart';
+import 'package:rockpaperscisoors/constants.dart';
 
 class ChoiceButton extends SpriteComponent with TapCallbacks {
   final GameChoice choice;

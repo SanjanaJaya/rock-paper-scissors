@@ -1,24 +1,27 @@
+import 'dart:math';
+
 import 'package:flame/components.dart';
 import 'package:flame/game.dart';
-import 'package:flame/input.dart';
+import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
 import 'components/choice_button.dart';
 import 'constants.dart';
 
-class RockPaperScissorsGame extends FlameGame with HasTapableComponents {
+class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents, HasCollisionDetection {
   late TextComponent playerScoreText;
   late TextComponent computerScoreText;
   late TextComponent resultText;
 
   int playerScore = 0;
   int computerScore = 0;
+  final Random _random = Random();
+
+  @override
+  Color backgroundColor() => GameConstants.backgroundColor;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
-
-    // Set background color
-    camera.backgroundColor = GameConstants.backgroundColor;
 
     // Add buttons
     final buttonSpacing = size.x / 4;
@@ -102,7 +105,7 @@ class RockPaperScissorsGame extends FlameGame with HasTapableComponents {
   }
 
   GameChoice getRandomChoice() {
-    final random = Random().nextInt(3);
+    final random = _random.nextInt(3);
     return GameChoice.values[random];
   }
 
