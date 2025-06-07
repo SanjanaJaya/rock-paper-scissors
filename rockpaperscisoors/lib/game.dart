@@ -23,6 +23,10 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   bool gameEnded = false;
   static const int winningScore = 5;
 
+  // Difficulty system properties
+  Difficulty difficulty = Difficulty.medium;
+  GameChoice? lastPlayerChoice;
+
   @override
   Color backgroundColor() => GameConstants.backgroundColor;
 
@@ -156,9 +160,14 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     add(restartText);
   }
 
+  void setDifficulty(Difficulty newDifficulty) {
+    difficulty = newDifficulty;
+  }
+
   void makeChoice(GameChoice playerChoice) {
     if (gameEnded) return;
 
+    lastPlayerChoice = playerChoice;
     final computerChoice = getRandomChoice();
     final result = determineWinner(playerChoice, computerChoice);
 
@@ -235,6 +244,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     playerScore = 0;
     computerScore = 0;
     gameEnded = false;
+    lastPlayerChoice = null;
 
     playerScoreText.text = 'Player: $playerScore';
     computerScoreText.text = 'Computer: $computerScore';
@@ -268,8 +278,52 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   }
 
   GameChoice getRandomChoice() {
+    switch (difficulty) {
+      case Difficulty.easy:
+      // Easy - more predictable choices
+        if (_random.nextDouble() < 0.7) {
+          // 70% chance to choose the losing option
+          return getLosingChoice(lastPlayerChoice ?? getRandomBaseChoice());
+        }
+        return getRandomBaseChoice();
+      case Difficulty.medium:
+      // Medium - balanced
+        return getRandomBaseChoice();
+      case Difficulty.hard:
+      // Hard - more likely to win
+        if (_random.nextDouble() < 0.7) {
+          // 70% chance to choose the winning option
+          return getWinningChoice(lastPlayerChoice ?? getRandomBaseChoice());
+        }
+        return getRandomBaseChoice();
+    }
+  }
+
+  GameChoice getRandomBaseChoice() {
     final random = _random.nextInt(3);
     return GameChoice.values[random];
+  }
+
+  GameChoice getWinningChoice(GameChoice against) {
+    switch (against) {
+      case GameChoice.rock:
+        return GameChoice.paper;
+      case GameChoice.paper:
+        return GameChoice.scissors;
+      case GameChoice.scissors:
+        return GameChoice.rock;
+    }
+  }
+
+  GameChoice getLosingChoice(GameChoice against) {
+    switch (against) {
+      case GameChoice.rock:
+        return GameChoice.scissors;
+      case GameChoice.paper:
+        return GameChoice.rock;
+      case GameChoice.scissors:
+        return GameChoice.paper;
+    }
   }
 
   int determineWinner(GameChoice player, GameChoice computer) {
