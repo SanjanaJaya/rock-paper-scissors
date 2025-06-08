@@ -84,7 +84,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // AI Label and Score (Top section)
     aiLabel = TextComponent(
       text: '🤖 AI',
-      position: Vector2(size.x / 2, size.y * 0.08),
+      position: Vector2(size.x / 2, size.y * 0.12),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
@@ -104,7 +104,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
 
     computerScoreText = TextComponent(
       text: 'Score: $computerScore',
-      position: Vector2(size.x / 2, size.y * 0.12),
+      position: Vector2(size.x / 2, size.y * 0.16),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
@@ -246,7 +246,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
 
   Future<void> _initializeStars() async {
     final starSize = size.y * 0.035; // 3.5% of screen height
-    final starSpacing = size.x * 0.08; // 8% of screen width for more space
+    final starSpacing = size.x * 0.10; // 8% of screen width for more space
     final totalStarsWidth = (winningScore * starSpacing) - starSpacing;
     final startX = (size.x - totalStarsWidth) / 2;
 
@@ -265,7 +265,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       final computerStar = SpriteComponent(
         sprite: await Sprite.load(GameConstants.emptyStarAsset),
         size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.17),
+        position: Vector2(startX + i * starSpacing, size.y * 0.06),
       );
       computerStars.add(computerStar);
       add(computerStar);
@@ -276,7 +276,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       final playerStar = SpriteComponent(
         sprite: await Sprite.load(GameConstants.emptyStarAsset),
         size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.55),
+        position: Vector2(startX + i * starSpacing, size.y * 0.72),
       );
       playerStars.add(playerStar);
       add(playerStar);
