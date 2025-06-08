@@ -15,8 +15,6 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   late TextComponent playerScoreText;
   late TextComponent computerScoreText;
   late TextComponent resultText;
-  late TextComponent playerChoiceText;
-  late TextComponent computerChoiceText;
   late TextComponent gameStatusText;
   late TextComponent restartText;
   late TextComponent playerLabel;
@@ -51,13 +49,13 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     );
     add(background);
 
-    // Calculate dynamic sizes
-    final buttonWidth = size.x * GameConstants.buttonWidth;
-    final buttonHeight = size.x * GameConstants.buttonHeight;
-    final buttonSpacing = size.x * GameConstants.buttonSpacing;
-    final buttonBottomMargin = size.y * GameConstants.buttonBottomMargin;
+    // Calculate dynamic sizes for buttons centered at bottom
+    final buttonWidth = size.x * 0.18; // Slightly larger buttons
+    final buttonHeight = size.x * 0.18;
+    final buttonSpacing = size.x * 0.05; // Space between buttons
+    final buttonBottomMargin = size.y * 0.05; // Margin from bottom
 
-    // Add buttons - positioned in a row at the bottom
+    // Center the buttons horizontally
     final totalButtonsWidth = (buttonWidth * 3) + (buttonSpacing * 2);
     final startX = (size.x - totalButtonsWidth) / 2;
     final buttonY = size.y - buttonHeight - buttonBottomMargin;
@@ -127,7 +125,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Player Label and Score (Bottom section)
     playerLabel = TextComponent(
       text: '👤 YOU',
-      position: Vector2(size.x / 2, size.y * 0.75),
+      position: Vector2(size.x / 2, size.y * 0.65),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
@@ -147,7 +145,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
 
     playerScoreText = TextComponent(
       text: 'Score: $playerScore',
-      position: Vector2(size.x / 2, size.y * 0.79),
+      position: Vector2(size.x / 2, size.y * 0.69),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
@@ -168,7 +166,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Game status text (center)
     gameStatusText = TextComponent(
       text: 'First to $winningScore wins!',
-      position: Vector2(size.x / 2, size.y * 0.45),
+      position: Vector2(size.x / 2, size.y * 0.4),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
@@ -188,53 +186,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
 
     resultText = TextComponent(
       text: 'Choose Rock, Paper, or Scissors!',
-      position: Vector2(size.x / 2, size.y * 0.5),
+      position: Vector2(size.x / 2, size.y * 0.45),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.resultTextColor,
           fontSize: size.y * 0.03,
-          fontWeight: FontWeight.bold,
-          shadows: [
-            Shadow(
-              color: Colors.black,
-              blurRadius: 5,
-              offset: Offset(2, 2),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    // Player and Computer choice display
-    playerChoiceText = TextComponent(
-      text: '',
-      position: Vector2(size.x / 2, size.y * 0.65),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: TextStyle(
-          color: GameConstants.textColor,
-          fontSize: size.y * 0.022,
-          fontWeight: FontWeight.bold,
-          shadows: [
-            Shadow(
-              color: Colors.black,
-              blurRadius: 5,
-              offset: Offset(2, 2),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    computerChoiceText = TextComponent(
-      text: '',
-      position: Vector2(size.x / 2, size.y * 0.35),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: TextStyle(
-          color: GameConstants.textColor,
-          fontSize: size.y * 0.022,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -281,8 +238,6 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     add(playerScoreText);
     add(gameStatusText);
     add(resultText);
-    add(playerChoiceText);
-    add(computerChoiceText);
     add(restartText);
 
     // Initialize stars
@@ -316,12 +271,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       add(computerStar);
     }
 
-    // Create Player stars (bottom section, with more spacing from AI stars)
+    // Create Player stars (bottom section)
     for (int i = 0; i < winningScore; i++) {
       final playerStar = SpriteComponent(
         sprite: await Sprite.load(GameConstants.emptyStarAsset),
         size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.71),
+        position: Vector2(startX + i * starSpacing, size.y * 0.55),
       );
       playerStars.add(playerStar);
       add(playerStar);
@@ -375,21 +330,9 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     lastPlayerChoice = playerChoice;
 
     try {
-      // Show player choice animation (positioned below player choice text)
+      // Show player choice animation
       final playerAnimation = await _createChoiceAnimation(playerChoice, false);
       add(playerAnimation);
-      playerChoiceText.text = 'You chose ${getChoiceName(playerChoice)}';
-
-      // Add pulse effect to player choice text
-      playerChoiceText.add(
-        ScaleEffect.by(
-          Vector2.all(1.2),
-          EffectController(
-            duration: 0.3,
-            reverseDuration: 0.3,
-          ),
-        ),
-      );
 
       await Future.delayed(const Duration(milliseconds: 800));
 
@@ -397,18 +340,6 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       final computerChoice = getRandomChoice();
       final computerAnimation = await _createChoiceAnimation(computerChoice, true);
       add(computerAnimation);
-      computerChoiceText.text = 'AI chose ${getChoiceName(computerChoice)}';
-
-      // Add pulse effect to computer choice text
-      computerChoiceText.add(
-        ScaleEffect.by(
-          Vector2.all(1.2),
-          EffectController(
-            duration: 0.3,
-            reverseDuration: 0.3,
-          ),
-        ),
-      );
 
       await Future.delayed(const Duration(milliseconds: 800));
 
@@ -565,8 +496,8 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     }
 
     final sprite = await Sprite.load(assetPath);
-    final animationSize = size.x * 0.25; // Slightly smaller to avoid overlap
-    final yPosition = isComputer ? size.y * 0.25 : size.y * 0.58; // Adjusted positions
+    final animationSize = size.x * 0.25;
+    final yPosition = isComputer ? size.y * 0.25 : size.y * 0.5;
 
     return SpriteComponent(
       sprite: sprite,
@@ -613,8 +544,6 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         ],
       ),
     );
-    playerChoiceText.text = '';
-    computerChoiceText.text = '';
     restartText.text = '';
     await _updateStars();
 
