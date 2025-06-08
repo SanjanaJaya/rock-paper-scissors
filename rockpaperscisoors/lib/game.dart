@@ -49,27 +49,36 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     );
     add(background);
 
-    // Add buttons
-    final buttonSpacing = size.x / 6;
-    final startY = size.y * 0.85;
-    final buttonYOffset = 20.0;
+    // Calculate dynamic sizes
+    final buttonWidth = size.x * GameConstants.buttonWidth;
+    final buttonHeight = size.x * GameConstants.buttonHeight;
+    final buttonSpacing = size.x * GameConstants.buttonSpacing;
+    final buttonBottomMargin = size.y * GameConstants.buttonBottomMargin;
+
+    // Add buttons - positioned in a row at the bottom
+    final totalButtonsWidth = (buttonWidth * 3) + (buttonSpacing * 2);
+    final startX = (size.x - totalButtonsWidth) / 2;
+    final buttonY = size.y - buttonHeight - buttonBottomMargin;
 
     add(ChoiceButton(
       choice: GameChoice.rock,
       onPressed: () => makeChoice(GameChoice.rock),
-      position: Vector2(buttonSpacing * 2 - GameConstants.buttonWidth/2, startY - buttonYOffset),
+      position: Vector2(startX, buttonY),
+      size: Vector2(buttonWidth, buttonHeight),
     ));
 
     add(ChoiceButton(
       choice: GameChoice.paper,
       onPressed: () => makeChoice(GameChoice.paper),
-      position: Vector2(buttonSpacing * 3 - GameConstants.buttonWidth/2, startY - buttonYOffset),
+      position: Vector2(startX + buttonWidth + buttonSpacing, buttonY),
+      size: Vector2(buttonWidth, buttonHeight),
     ));
 
     add(ChoiceButton(
       choice: GameChoice.scissors,
       onPressed: () => makeChoice(GameChoice.scissors),
-      position: Vector2(buttonSpacing * 4 - GameConstants.buttonWidth/2, startY - buttonYOffset),
+      position: Vector2(startX + (buttonWidth + buttonSpacing) * 2, buttonY),
+      size: Vector2(buttonWidth, buttonHeight),
     ));
 
     // Add score texts
@@ -79,7 +88,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 28,
+          fontSize: size.y * 0.03, // 3% of screen height
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -98,7 +107,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 28,
+          fontSize: size.y * 0.03,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -114,12 +123,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Game status text
     gameStatusText = TextComponent(
       text: 'First to $winningScore wins!',
-      position: Vector2(size.x / 2, 80),
+      position: Vector2(size.x / 2, size.y * 0.1),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.highlightColor,
-          fontSize: 24,
+          fontSize: size.y * 0.025,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -139,7 +148,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.resultTextColor,
-          fontSize: 28,
+          fontSize: size.y * 0.03,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -155,12 +164,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Player and Computer choice display
     playerChoiceText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y * 0.65),
+      position: Vector2(size.x / 2, size.y * 0.7),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 24,
+          fontSize: size.y * 0.025,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -175,12 +184,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
 
     computerChoiceText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y * 0.35),
+      position: Vector2(size.x / 2, size.y * 0.3),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: 24,
+          fontSize: size.y * 0.025,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -196,12 +205,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Restart instruction text
     restartText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y - 40),
+      position: Vector2(size.x / 2, size.y - (buttonBottomMargin / 2)),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.highlightColor,
-          fontSize: 22,
+          fontSize: size.y * 0.025,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -234,8 +243,8 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   }
 
   Future<void> _initializeStars() async {
-    final starSize = 30.0;
-    final starSpacing = 40.0;
+    final starSize = size.y * 0.04; // 4% of screen height
+    final starSpacing = size.x * 0.05; // 5% of screen width
     final startX = size.x / 2 - (winningScore * starSpacing) / 2;
 
     // Clear existing stars
@@ -261,7 +270,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       final computerStar = SpriteComponent(
         sprite: await Sprite.load(GameConstants.emptyStarAsset),
         size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.25),
+        position: Vector2(startX + i * starSpacing, size.y * 0.2),
       );
       computerStars.add(computerStar);
       add(computerStar);
@@ -324,7 +333,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.winColor,
-            fontSize: 28,
+            fontSize: size.y * 0.03,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -341,7 +350,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.loseColor,
-            fontSize: 28,
+            fontSize: size.y * 0.03,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -357,7 +366,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: Colors.yellow,
-            fontSize: 28,
+            fontSize: size.y * 0.03,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -381,7 +390,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.winColor,
-            fontSize: 32,
+            fontSize: size.y * 0.035,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -401,7 +410,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.loseColor,
-            fontSize: 32,
+            fontSize: size.y * 0.035,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -438,12 +447,13 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     }
 
     final sprite = await Sprite.load(assetPath);
+    final animationSize = size.x * GameConstants.choiceAnimationSize;
     return SpriteComponent(
       sprite: sprite,
-      size: Vector2.all(GameConstants.choiceAnimationSize),
+      size: Vector2.all(animationSize),
       position: Vector2(
-        size.x / 2 - GameConstants.choiceAnimationSize / 2,
-        isComputer ? size.y * 0.3 : size.y * 0.6,
+        size.x / 2 - animationSize / 2,
+        isComputer ? size.y * 0.25 : size.y * 0.6,
       ),
     )..opacity = 0.0
       ..add(OpacityEffect.fadeIn(EffectController(duration: 0.3)));
@@ -463,7 +473,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     resultText.textRenderer = TextPaint(
       style: TextStyle(
         color: GameConstants.resultTextColor,
-        fontSize: 28,
+        fontSize: size.y * 0.03,
         fontWeight: FontWeight.bold,
         shadows: [
           Shadow(

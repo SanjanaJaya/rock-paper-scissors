@@ -13,6 +13,9 @@ class DifficultySelectionGame extends FlameGame {
   DifficultySelectionGame({required this.onDifficultySelected});
 
   @override
+  Color backgroundColor() => GameConstants.backgroundColor;
+
+  @override
   Future<void> onLoad() async {
     await super.onLoad();
     // Don't add UI components here - wait for layout
@@ -40,17 +43,19 @@ class DifficultySelectionGame extends FlameGame {
     if (!hasLayout) return;
 
     final centerX = size.x / 2;
-    final buttonSpacing = GameConstants.menuButtonHeight + 20;
+    final buttonWidth = size.x * GameConstants.menuButtonWidth;
+    final buttonHeight = size.y * GameConstants.menuButtonHeight;
+    final buttonSpacing = buttonHeight + 20;
 
     // Title
     add(TextComponent(
       text: 'Select Difficulty',
-      position: Vector2(centerX, 150),
+      position: Vector2(centerX, size.y * 0.2),
       anchor: Anchor.center,
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.highlightColor,
-          fontSize: 32,
+          fontSize: size.y * 0.045, // 4.5% of screen height
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -60,24 +65,30 @@ class DifficultySelectionGame extends FlameGame {
     add(MenuButton(
       text: 'Easy',
       onPressed: () => onDifficultySelected(Difficulty.easy),
-      position: Vector2(centerX, 250),
+      position: Vector2(centerX, size.y * 0.35),
+      size: Vector2(buttonWidth, buttonHeight),
       buttonColor: Colors.green.withOpacity(0.7),
+      textColor: Colors.white,
     ));
 
     // Medium button
     add(MenuButton(
       text: 'Medium',
       onPressed: () => onDifficultySelected(Difficulty.medium),
-      position: Vector2(centerX, 250 + buttonSpacing),
+      position: Vector2(centerX, size.y * 0.35 + buttonSpacing),
+      size: Vector2(buttonWidth, buttonHeight),
       buttonColor: Colors.orange.withOpacity(0.7),
+      textColor: Colors.white,
     ));
 
     // Hard button
     add(MenuButton(
       text: 'Hard',
       onPressed: () => onDifficultySelected(Difficulty.hard),
-      position: Vector2(centerX, 250 + buttonSpacing * 2),
+      position: Vector2(centerX, size.y * 0.35 + buttonSpacing * 2),
+      size: Vector2(buttonWidth, buttonHeight),
       buttonColor: Colors.red.withOpacity(0.7),
+      textColor: Colors.white,
     ));
 
     // Back button
@@ -87,8 +98,10 @@ class DifficultySelectionGame extends FlameGame {
         // Navigate back to main menu
         // This might need to be handled differently depending on your navigation setup
       },
-      position: Vector2(centerX, size.y - 100),
+      position: Vector2(centerX, size.y - buttonHeight * 1.5),
+      size: Vector2(buttonWidth, buttonHeight),
       buttonColor: GameConstants.buttonColor,
+      textColor: Colors.black,
     ));
   }
 }

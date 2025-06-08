@@ -114,13 +114,18 @@ class _MainMenuGame extends FlameGame {
   });
 
   @override
+  Color backgroundColor() => GameConstants.backgroundColor;
+
+  @override
   Future<void> onLoad() async {
     await super.onLoad();
+    // Don't add UI components here - wait for layout
   }
 
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
+    // Clear existing components when resizing
     removeAll(children.where((component) =>
     component is TextComponent || component is MenuButton).toList());
     _setupUI();
@@ -129,6 +134,7 @@ class _MainMenuGame extends FlameGame {
   @override
   void onMount() {
     super.onMount();
+    // Setup UI once the game is mounted and has layout
     if (hasLayout) {
       _setupUI();
     }
@@ -138,17 +144,19 @@ class _MainMenuGame extends FlameGame {
     if (!hasLayout) return;
 
     final centerX = size.x / 2;
-    final buttonSpacing = GameConstants.menuButtonHeight + 20;
+    final buttonWidth = size.x * GameConstants.menuButtonWidth;
+    final buttonHeight = size.y * GameConstants.menuButtonHeight;
+    final buttonSpacing = buttonHeight + 20;
 
     // Title
     add(TextComponent(
       text: 'Rock Paper Scissors',
-      position: Vector2(centerX, 150),
+      position: Vector2(centerX, size.y * 0.2),
       anchor: Anchor.center,
       textRenderer: TextPaint(
-        style: const TextStyle(
+        style: TextStyle(
           color: GameConstants.highlightColor,
-          fontSize: 36,
+          fontSize: size.y * 0.05, // 5% of screen height
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -158,21 +166,24 @@ class _MainMenuGame extends FlameGame {
     add(MenuButton(
       text: 'Player vs AI',
       onPressed: onSinglePlayer,
-      position: Vector2(centerX, 300),
+      position: Vector2(centerX, size.y * 0.4),
+      size: Vector2(buttonWidth, buttonHeight),
     ));
 
     // Multi Player button
     add(MenuButton(
       text: 'Player vs Player',
       onPressed: onMultiPlayer,
-      position: Vector2(centerX, 300 + buttonSpacing),
+      position: Vector2(centerX, size.y * 0.4 + buttonSpacing),
+      size: Vector2(buttonWidth, buttonHeight),
     ));
 
     // Developers button
     add(MenuButton(
       text: 'Developers',
       onPressed: onDevelopers,
-      position: Vector2(centerX, 300 + buttonSpacing * 2),
+      position: Vector2(centerX, size.y * 0.4 + buttonSpacing * 2),
+      size: Vector2(buttonWidth, buttonHeight),
     ));
   }
 }

@@ -12,8 +12,9 @@ class ChoiceButton extends SpriteComponent with TapCallbacks, HasVisibility {
     required this.choice,
     required this.onPressed,
     required Vector2 position,
+    Vector2? size,
   }) : super(
-    size: Vector2(GameConstants.buttonWidth, GameConstants.buttonHeight),
+    size: size ?? Vector2(GameConstants.buttonWidth, GameConstants.buttonHeight),
     position: position,
     anchor: Anchor.center,
   );
@@ -44,15 +45,16 @@ class ChoiceButton extends SpriteComponent with TapCallbacks, HasVisibility {
         paint.colorFilter = const ColorFilter.mode(Colors.grey, BlendMode.multiply);
       }
 
-      // Draw border
+      // Draw border with responsive corner radius
+      final cornerRadius = size.x * 0.1; // 10% of button width
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(0, 0, size.x, size.y),
-          const Radius.circular(10),
+          Radius.circular(cornerRadius),
         ),
         Paint()..color = _isPressed ? GameConstants.highlightColor : GameConstants.buttonColor
           ..style = PaintingStyle.stroke
-          ..strokeWidth = 3,
+          ..strokeWidth = size.x * 0.02, // 2% of button width
       );
 
       super.render(canvas);
@@ -62,21 +64,23 @@ class ChoiceButton extends SpriteComponent with TapCallbacks, HasVisibility {
         ..color = _isPressed ? GameConstants.highlightColor : GameConstants.buttonColor
         ..style = PaintingStyle.fill;
 
+      final cornerRadius = size.x * 0.1; // 10% of button width
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(0, 0, size.x, size.y),
-          const Radius.circular(10),
+          Radius.circular(cornerRadius),
         ),
         paint,
       );
 
-      // Draw choice text
+      // Draw choice text with responsive font size
+      final emojiSize = size.x * 0.3; // 30% of button width
       final textPainter = TextPainter(
         text: TextSpan(
           text: getChoiceEmoji(),
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 40,
+            fontSize: emojiSize,
           ),
         ),
         textDirection: TextDirection.ltr,
@@ -86,17 +90,18 @@ class ChoiceButton extends SpriteComponent with TapCallbacks, HasVisibility {
         canvas,
         Offset(
           (size.x - textPainter.width) / 2,
-          (size.y - textPainter.height) / 2,
+          (size.y - textPainter.height) / 2 - size.y * 0.1,
         ),
       );
 
-      // Draw choice name
+      // Draw choice name with responsive font size
+      final textSize = size.x * 0.12; // 12% of button width
       final namePainter = TextPainter(
         text: TextSpan(
           text: getChoiceText(),
-          style: const TextStyle(
+          style: TextStyle(
             color: Colors.white,
-            fontSize: 16,
+            fontSize: textSize,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -107,7 +112,7 @@ class ChoiceButton extends SpriteComponent with TapCallbacks, HasVisibility {
         canvas,
         Offset(
           (size.x - namePainter.width) / 2,
-          size.y - 25,
+          size.y - (size.y * 0.2), // 20% from bottom
         ),
       );
     }

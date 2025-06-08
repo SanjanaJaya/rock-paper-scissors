@@ -14,12 +14,16 @@ class GameConstants {
   static const Color winColor = Color(0xFF00FF00);
   static const Color loseColor = Color(0xFFFF0000);
 
-  // Sizes
-  static const double buttonWidth = 100;
-  static const double buttonHeight = 100;
-  static const double menuButtonWidth = 250;
-  static const double menuButtonHeight = 60;
-  static const double choiceAnimationSize = 180;
+  // Sizes - now based on percentages of screen size
+  static const double buttonWidth = 0.2; // 20% of screen width
+  static const double buttonHeight = 0.2; // 20% of screen width (to keep square)
+  static const double menuButtonWidth = 0.6;
+  static const double menuButtonHeight = 0.1;
+  static const double choiceAnimationSize = 0.4; // 40% of screen width
+
+  // Spacing
+  static const double buttonSpacing = 0.05; // 5% of screen width between buttons
+  static const double buttonBottomMargin = 0.05; // 5% from bottom
 
   // Assets
   static const String backgroundAsset = 'background.png';
