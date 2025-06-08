@@ -50,14 +50,14 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     add(background);
 
     // Calculate dynamic sizes for buttons centered at bottom
-    final buttonWidth = size.x * 0.18; // Slightly larger buttons
-    final buttonHeight = size.x * 0.18;
-    final buttonSpacing = size.x * 0.05; // Space between buttons
+    final buttonWidth = size.x * 0.20; // Slightly larger buttons
+    final buttonHeight = size.x * 0.20;
+    final buttonSpacing = size.x * 0.07; // Space between buttons
     final buttonBottomMargin = size.y * 0.05; // Margin from bottom
 
     // Center the buttons horizontally
     final totalButtonsWidth = (buttonWidth * 3) + (buttonSpacing * 2);
-    final startX = (size.x - totalButtonsWidth) / 2;
+    final startX = (size.x - totalButtonsWidth) / 1.1;
     final buttonY = size.y - buttonHeight - buttonBottomMargin;
 
     add(ChoiceButton(
