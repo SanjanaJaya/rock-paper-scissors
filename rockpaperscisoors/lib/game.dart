@@ -19,6 +19,8 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   late TextComponent computerChoiceText;
   late TextComponent gameStatusText;
   late TextComponent restartText;
+  late TextComponent playerLabel;
+  late TextComponent aiLabel;
   late SpriteComponent background;
   late RectangleComponent restartArea;
 
@@ -81,32 +83,14 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       size: Vector2(buttonWidth, buttonHeight),
     ));
 
-    // Add score texts
-    playerScoreText = TextComponent(
-      text: 'YOU: $playerScore',
-      position: Vector2(40, 40),
+    // AI Label and Score (Top section)
+    aiLabel = TextComponent(
+      text: '🤖 AI',
+      position: Vector2(size.x / 2, size.y * 0.08),
+      anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
-          color: GameConstants.textColor,
-          fontSize: size.y * 0.03, // 3% of screen height
-          fontWeight: FontWeight.bold,
-          shadows: [
-            Shadow(
-              color: Colors.black,
-              blurRadius: 5,
-              offset: Offset(2, 2),
-            ),
-          ],
-        ),
-      ),
-    );
-
-    computerScoreText = TextComponent(
-      text: 'AI: $computerScore',
-      position: Vector2(size.x - 80, 40),
-      textRenderer: TextPaint(
-        style: TextStyle(
-          color: GameConstants.textColor,
+          color: GameConstants.highlightColor,
           fontSize: size.y * 0.03,
           fontWeight: FontWeight.bold,
           shadows: [
@@ -120,10 +104,71 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       ),
     );
 
-    // Game status text
+    computerScoreText = TextComponent(
+      text: 'Score: $computerScore',
+      position: Vector2(size.x / 2, size.y * 0.12),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: TextStyle(
+          color: GameConstants.textColor,
+          fontSize: size.y * 0.025,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Player Label and Score (Bottom section)
+    playerLabel = TextComponent(
+      text: '👤 YOU',
+      position: Vector2(size.x / 2, size.y * 0.75),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: TextStyle(
+          color: GameConstants.highlightColor,
+          fontSize: size.y * 0.03,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    playerScoreText = TextComponent(
+      text: 'Score: $playerScore',
+      position: Vector2(size.x / 2, size.y * 0.79),
+      anchor: Anchor.center,
+      textRenderer: TextPaint(
+        style: TextStyle(
+          color: GameConstants.textColor,
+          fontSize: size.y * 0.025,
+          fontWeight: FontWeight.bold,
+          shadows: [
+            Shadow(
+              color: Colors.black,
+              blurRadius: 5,
+              offset: Offset(2, 2),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Game status text (center)
     gameStatusText = TextComponent(
       text: 'First to $winningScore wins!',
-      position: Vector2(size.x / 2, size.y * 0.1),
+      position: Vector2(size.x / 2, size.y * 0.45),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
@@ -164,12 +209,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     // Player and Computer choice display
     playerChoiceText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y * 0.7),
+      position: Vector2(size.x / 2, size.y * 0.65),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: size.y * 0.025,
+          fontSize: size.y * 0.022,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -184,12 +229,12 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
 
     computerChoiceText = TextComponent(
       text: '',
-      position: Vector2(size.x / 2, size.y * 0.3),
+      position: Vector2(size.x / 2, size.y * 0.35),
       anchor: Anchor.center,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.textColor,
-          fontSize: size.y * 0.025,
+          fontSize: size.y * 0.022,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -210,7 +255,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       textRenderer: TextPaint(
         style: TextStyle(
           color: GameConstants.highlightColor,
-          fontSize: size.y * 0.025,
+          fontSize: size.y * 0.02,
           fontWeight: FontWeight.bold,
           shadows: [
             Shadow(
@@ -230,8 +275,10 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       paint: Paint()..color = Colors.transparent,
     );
 
-    add(playerScoreText);
+    add(aiLabel);
     add(computerScoreText);
+    add(playerLabel);
+    add(playerScoreText);
     add(gameStatusText);
     add(resultText);
     add(playerChoiceText);
@@ -243,9 +290,10 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   }
 
   Future<void> _initializeStars() async {
-    final starSize = size.y * 0.04; // 4% of screen height
-    final starSpacing = size.x * 0.05; // 5% of screen width
-    final startX = size.x / 2 - (winningScore * starSpacing) / 2;
+    final starSize = size.y * 0.035; // 3.5% of screen height
+    final starSpacing = size.x * 0.08; // 8% of screen width for more space
+    final totalStarsWidth = (winningScore * starSpacing) - starSpacing;
+    final startX = (size.x - totalStarsWidth) / 2;
 
     // Clear existing stars
     for (final star in playerStars) {
@@ -257,23 +305,26 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     playerStars.clear();
     computerStars.clear();
 
-    // Create new stars
+    // Create AI stars (top section)
+    for (int i = 0; i < winningScore; i++) {
+      final computerStar = SpriteComponent(
+        sprite: await Sprite.load(GameConstants.emptyStarAsset),
+        size: Vector2.all(starSize),
+        position: Vector2(startX + i * starSpacing, size.y * 0.17),
+      );
+      computerStars.add(computerStar);
+      add(computerStar);
+    }
+
+    // Create Player stars (bottom section, with more spacing from AI stars)
     for (int i = 0; i < winningScore; i++) {
       final playerStar = SpriteComponent(
         sprite: await Sprite.load(GameConstants.emptyStarAsset),
         size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.15),
+        position: Vector2(startX + i * starSpacing, size.y * 0.71),
       );
       playerStars.add(playerStar);
       add(playerStar);
-
-      final computerStar = SpriteComponent(
-        sprite: await Sprite.load(GameConstants.emptyStarAsset),
-        size: Vector2.all(starSize),
-        position: Vector2(startX + i * starSpacing, size.y * 0.2),
-      );
-      computerStars.add(computerStar);
-      add(computerStar);
     }
   }
 
@@ -281,12 +332,32 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     for (int i = 0; i < winningScore; i++) {
       if (i < playerScore) {
         playerStars[i].sprite = await Sprite.load(GameConstants.starAsset);
+        // Add bounce effect when star is filled
+        playerStars[i].add(
+          ScaleEffect.by(
+            Vector2.all(1.3),
+            EffectController(
+              duration: 0.2,
+              reverseDuration: 0.2,
+            ),
+          ),
+        );
       } else {
         playerStars[i].sprite = await Sprite.load(GameConstants.emptyStarAsset);
       }
 
       if (i < computerScore) {
         computerStars[i].sprite = await Sprite.load(GameConstants.starAsset);
+        // Add bounce effect when star is filled
+        computerStars[i].add(
+          ScaleEffect.by(
+            Vector2.all(1.3),
+            EffectController(
+              duration: 0.2,
+              reverseDuration: 0.2,
+            ),
+          ),
+        );
       } else {
         computerStars[i].sprite = await Sprite.load(GameConstants.emptyStarAsset);
       }
@@ -304,10 +375,21 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     lastPlayerChoice = playerChoice;
 
     try {
-      // Show player choice animation
+      // Show player choice animation (positioned below player choice text)
       final playerAnimation = await _createChoiceAnimation(playerChoice, false);
       add(playerAnimation);
       playerChoiceText.text = 'You chose ${getChoiceName(playerChoice)}';
+
+      // Add pulse effect to player choice text
+      playerChoiceText.add(
+        ScaleEffect.by(
+          Vector2.all(1.2),
+          EffectController(
+            duration: 0.3,
+            reverseDuration: 0.3,
+          ),
+        ),
+      );
 
       await Future.delayed(const Duration(milliseconds: 800));
 
@@ -316,6 +398,17 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       final computerAnimation = await _createChoiceAnimation(computerChoice, true);
       add(computerAnimation);
       computerChoiceText.text = 'AI chose ${getChoiceName(computerChoice)}';
+
+      // Add pulse effect to computer choice text
+      computerChoiceText.add(
+        ScaleEffect.by(
+          Vector2.all(1.2),
+          EffectController(
+            duration: 0.3,
+            reverseDuration: 0.3,
+          ),
+        ),
+      );
 
       await Future.delayed(const Duration(milliseconds: 800));
 
@@ -329,7 +422,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
       // Update scores and display result
       if (result == 1) {
         playerScore++;
-        resultText.text = 'You win this round!';
+        resultText.text = '🎉 You win this round! 🎉';
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.winColor,
@@ -344,9 +437,21 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
             ],
           ),
         );
+
+        // Add celebration effect
+        resultText.add(
+          ScaleEffect.by(
+            Vector2.all(1.3),
+            EffectController(
+              duration: 0.4,
+              reverseDuration: 0.4,
+            ),
+          ),
+        );
+
       } else if (result == -1) {
         computerScore++;
-        resultText.text = 'AI wins this round!';
+        resultText.text = '💻 AI wins this round! 💻';
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.loseColor,
@@ -362,7 +467,7 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
           ),
         );
       } else {
-        resultText.text = 'It\'s a tie!';
+        resultText.text = '🤝 It\'s a tie! 🤝';
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: Colors.yellow,
@@ -379,18 +484,18 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         );
       }
 
-      playerScoreText.text = 'YOU: $playerScore';
-      computerScoreText.text = 'AI: $computerScore';
+      playerScoreText.text = 'Score: $playerScore';
+      computerScoreText.text = 'Score: $computerScore';
       await _updateStars();
 
       // Check for game end
       if (playerScore >= winningScore) {
         gameEnded = true;
-        resultText.text = '🎉 YOU WON THE GAME! 🎉';
+        resultText.text = '🏆 VICTORY! YOU WON! 🏆';
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.winColor,
-            fontSize: size.y * 0.035,
+            fontSize: size.y * 0.04,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -401,16 +506,29 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
             ],
           ),
         );
-        gameStatusText.text = 'VICTORY!';
-        restartText.text = 'Tap anywhere to play again!';
+        gameStatusText.text = '🎊 CHAMPION! 🎊';
+        restartText.text = '✨ Tap anywhere to play again! ✨';
         add(RestartButton(onPressed: resetGame, size: size));
+
+        // Add victory animation
+        resultText.add(
+          ScaleEffect.by(
+            Vector2.all(1.5),
+            EffectController(
+              duration: 0.5,
+              reverseDuration: 0.5,
+              repeatCount: 3,
+            ),
+          ),
+        );
+
       } else if (computerScore >= winningScore) {
         gameEnded = true;
-        resultText.text = '💻 AI WINS! 💻';
+        resultText.text = '🤖 AI DOMINATES! 🤖';
         resultText.textRenderer = TextPaint(
           style: TextStyle(
             color: GameConstants.loseColor,
-            fontSize: size.y * 0.035,
+            fontSize: size.y * 0.04,
             fontWeight: FontWeight.bold,
             shadows: [
               Shadow(
@@ -421,8 +539,8 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
             ],
           ),
         );
-        gameStatusText.text = 'GAME OVER!';
-        restartText.text = 'Tap anywhere to play again!';
+        gameStatusText.text = '💀 GAME OVER! 💀';
+        restartText.text = '🔄 Tap anywhere for revenge! 🔄';
         add(RestartButton(onPressed: resetGame, size: size));
       }
     } catch (e) {
@@ -447,16 +565,27 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     }
 
     final sprite = await Sprite.load(assetPath);
-    final animationSize = size.x * GameConstants.choiceAnimationSize;
+    final animationSize = size.x * 0.25; // Slightly smaller to avoid overlap
+    final yPosition = isComputer ? size.y * 0.25 : size.y * 0.58; // Adjusted positions
+
     return SpriteComponent(
       sprite: sprite,
       size: Vector2.all(animationSize),
       position: Vector2(
         size.x / 2 - animationSize / 2,
-        isComputer ? size.y * 0.25 : size.y * 0.6,
+        yPosition,
       ),
     )..opacity = 0.0
-      ..add(OpacityEffect.fadeIn(EffectController(duration: 0.3)));
+      ..add(OpacityEffect.fadeIn(EffectController(duration: 0.3)))
+      ..add(
+        ScaleEffect.by(
+          Vector2.all(1.2),
+          EffectController(
+            duration: 0.3,
+            reverseDuration: 0.3,
+          ),
+        ),
+      );
   }
 
   Future<void> resetGame() async {
@@ -466,8 +595,8 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     lastPlayerChoice = null;
     isAnimating = false;
 
-    playerScoreText.text = 'YOU: $playerScore';
-    computerScoreText.text = 'AI: $computerScore';
+    playerScoreText.text = 'Score: $playerScore';
+    computerScoreText.text = 'Score: $computerScore';
     gameStatusText.text = 'First to $winningScore wins!';
     resultText.text = 'Choose Rock, Paper, or Scissors!';
     resultText.textRenderer = TextPaint(
@@ -498,11 +627,11 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   String getChoiceName(GameChoice choice) {
     switch (choice) {
       case GameChoice.rock:
-        return 'Rock';
+        return 'Rock 🪨';
       case GameChoice.paper:
-        return 'Paper';
+        return 'Paper 📄';
       case GameChoice.scissors:
-        return 'Scissors';
+        return 'Scissors ✂️';
     }
   }
 
