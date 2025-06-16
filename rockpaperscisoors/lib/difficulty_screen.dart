@@ -1,14 +1,9 @@
 // difficulty_screen.dart
 // This file is kept for reference but the difficulty selection is now handled
 // as a popup dialog in main.dart
-
-import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:rockpaperscisoors/constants.dart';
-import 'package:rockpaperscisoors/game.dart';
-import 'package:rockpaperscisoors/menu_button.dart';
 
 // This class is kept for backward compatibility but is no longer used
 // The difficulty selection is now handled as a popup dialog in main.dart

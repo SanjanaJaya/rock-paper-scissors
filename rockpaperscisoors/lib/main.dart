@@ -2,12 +2,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flame/game.dart';
-import 'package:flame/components.dart';
-import 'package:flame/events.dart';
 import 'game.dart';
-import 'difficulty_screen.dart';
 import 'constants.dart';
-import 'menu_button.dart';
 import 'developers_screen.dart';
 
 void main() {
