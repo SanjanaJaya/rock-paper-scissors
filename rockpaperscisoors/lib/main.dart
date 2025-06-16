@@ -66,42 +66,145 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: GameWidget(
-        game: _MainMenuGame(
-          onSinglePlayer: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GameScreen(game: difficultyGame),
+      body: Stack(
+        children: [
+          // Background image
+          Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/background_menu.png'),
+                fit: BoxFit.cover,
               ),
-            );
-          },
-          onMultiPlayer: () {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text('Multiplayer mode coming soon!')),
-            );
-          },
-          onDevelopers: () {
-            showDialog(
-              context: context,
-              builder: (context) => AlertDialog(
-                title: const Text('Developers'),
-                content: const Text('This game was developed by your team.'),
-                actions: [
-                  TextButton(
-                    onPressed: () => Navigator.pop(context),
-                    child: const Text('OK'),
+            ),
+          ),
+          // Main Content
+          Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Title Text
+                Text(
+                  'ROCK PAPER\nSCISSORS',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 40,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(2, 2),
+                        blurRadius: 3,
+                        color: Colors.black54,
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            );
-          },
+                ),
+                SizedBox(height: 30),
+                // Hand Icons Row
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Image.asset('assets/images/rock_animation.png', width: 60),
+                    SizedBox(width: 20),
+                    Image.asset('assets/images/paper_animation.png', width: 60),
+                    SizedBox(width: 20),
+                    Image.asset('assets/images/scissors_animation.png', width: 60),
+                  ],
+                ),
+                SizedBox(height: 50),
+                // Buttons
+                GameMenuButton(
+                  text: 'PLAYER VS AI',
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(game: difficultyGame),
+                      ),
+                    );
+                  },
+                ),
+                GameMenuButton(
+                  text: 'PLAYER VS PLAYER',
+                  onTap: () {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Multiplayer mode coming soon!')),
+                    );
+                  },
+                ),
+                GameMenuButton(
+                  text: 'DEVELOPERS',
+                  onTap: () {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text('Developers'),
+                        content: const Text('This game was developed by your team.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('OK'),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class GameMenuButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+
+  const GameMenuButton({
+    Key? key,
+    required this.text,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        width: 260,
+        height: 60,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/button.png'),
+            fit: BoxFit.fill,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                offset: Offset(1, 1),
+                blurRadius: 2,
+                color: Colors.black,
+              )
+            ],
+          ),
         ),
       ),
     );
   }
 }
 
+// Keep the existing _MainMenuGame class for compatibility (not used in new UI)
 class _MainMenuGame extends FlameGame {
   final VoidCallback onSinglePlayer;
   final VoidCallback onMultiPlayer;
