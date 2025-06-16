@@ -176,36 +176,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> with WidgetsBindingObse
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                // Title Text
-                Text(
-                  'ROCK PAPER\nSCISSORS',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                    shadows: [
-                      Shadow(
-                        offset: Offset(2, 2),
-                        blurRadius: 3,
-                        color: Colors.black54,
-                      ),
-                    ],
-                  ),
-                ),
-                SizedBox(height: 30),
-                // Hand Icons Row
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Image.asset('assets/images/rock_animation.png', width: 60),
-                    SizedBox(width: 20),
-                    Image.asset('assets/images/paper_animation.png', width: 60),
-                    SizedBox(width: 20),
-                    Image.asset('assets/images/scissors_animation.png', width: 60),
-                  ],
-                ),
-                SizedBox(height: 50),
+                SizedBox(height: 600),
                 // Buttons
                 GameMenuButton(
                   text: 'PLAYER VS AI',
