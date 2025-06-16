@@ -55,7 +55,7 @@ class DevelopersScreen extends StatelessWidget {
                 children: [
                   // Title
                   Text(
-                    'DEVELOPERS',
+                    'DEVELOPER',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -73,33 +73,13 @@ class DevelopersScreen extends StatelessWidget {
 
                   // Developer 1
                   _buildDeveloperCard(
-                    name: 'John Doe',
+                    name: 'Imesh Sanjana',
                     role: 'Lead Developer',
-                    description: 'Responsible for game logic and AI implementation',
+                    description: 'I’m a Computer Security undergraduate at NSBM Green University with a strong passion for game development, cybersecurity, and ethical hacking. I actively work on software, mobile app, and web development projects, blending creativity with secure coding practices.',
                     icon: Icons.code,
                   ),
 
                   SizedBox(height: 20),
-
-                  // Developer 2
-                  _buildDeveloperCard(
-                    name: 'Jane Smith',
-                    role: 'UI/UX Designer',
-                    description: 'Created the beautiful interface and user experience',
-                    icon: Icons.design_services,
-                  ),
-
-                  SizedBox(height: 20),
-
-                  // Developer 3
-                  _buildDeveloperCard(
-                    name: 'Mike Johnson',
-                    role: 'Game Artist',
-                    description: 'Designed graphics, animations and visual effects',
-                    icon: Icons.palette,
-                  ),
-
-                  SizedBox(height: 30),
 
                   // Version info
                   Container(
@@ -128,7 +108,7 @@ class DevelopersScreen extends StatelessWidget {
                         ),
                         SizedBox(height: 5),
                         Text(
-                          '© 2024 Game Studio',
+                          '© 2025 Horizon Forge Studios',
                           style: TextStyle(
                             fontSize: 12,
                             color: Colors.white60,
