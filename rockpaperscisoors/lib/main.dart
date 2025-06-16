@@ -8,6 +8,7 @@ import 'game.dart';
 import 'difficulty_screen.dart';
 import 'constants.dart';
 import 'menu_button.dart';
+import 'developers_screen.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,19 +45,97 @@ class MainMenuScreen extends StatefulWidget {
 
 class _MainMenuScreenState extends State<MainMenuScreen> {
   late final RockPaperScissorsGame game;
-  late final DifficultySelectionGame difficultyGame;
 
   @override
   void initState() {
     super.initState();
     game = RockPaperScissorsGame();
-    difficultyGame = DifficultySelectionGame(
-      onDifficultySelected: (difficulty) {
-        game.setDifficulty(difficulty);
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GameScreen(game: game),
+  }
+
+  void _showDifficultyDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return Dialog(
+          backgroundColor: Colors.transparent,
+          child: Container(
+            decoration: BoxDecoration(
+              image: DecorationImage(
+                image: AssetImage('assets/images/background_menu.png'),
+                fit: BoxFit.cover,
+              ),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(20),
+              child: Container(
+                width: 300,
+                height: 400,
+                padding: EdgeInsets.all(20),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'SELECT DIFFICULTY',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                        shadows: [
+                          Shadow(
+                            offset: Offset(2, 2),
+                            blurRadius: 3,
+                            color: Colors.black54,
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 30),
+                    GameMenuButton(
+                      text: 'EASY',
+                      onTap: () {
+                        Navigator.pop(context);
+                        game.setDifficulty(Difficulty.easy);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GameScreen(game: game),
+                          ),
+                        );
+                      },
+                    ),
+                    GameMenuButton(
+                      text: 'MEDIUM',
+                      onTap: () {
+                        Navigator.pop(context);
+                        game.setDifficulty(Difficulty.medium);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GameScreen(game: game),
+                          ),
+                        );
+                      },
+                    ),
+                    GameMenuButton(
+                      text: 'HARD',
+                      onTap: () {
+                        Navigator.pop(context);
+                        game.setDifficulty(Difficulty.hard);
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => GameScreen(game: game),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ),
         );
       },
@@ -115,14 +194,7 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                 // Buttons
                 GameMenuButton(
                   text: 'PLAYER VS AI',
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => GameScreen(game: difficultyGame),
-                      ),
-                    );
-                  },
+                  onTap: _showDifficultyDialog,
                 ),
                 GameMenuButton(
                   text: 'PLAYER VS PLAYER',
@@ -135,17 +207,10 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
                 GameMenuButton(
                   text: 'DEVELOPERS',
                   onTap: () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: const Text('Developers'),
-                        content: const Text('This game was developed by your team.'),
-                        actions: [
-                          TextButton(
-                            onPressed: () => Navigator.pop(context),
-                            child: const Text('OK'),
-                          ),
-                        ],
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const DevelopersScreen(),
                       ),
                     );
                   },
@@ -201,93 +266,6 @@ class GameMenuButton extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-// Keep the existing _MainMenuGame class for compatibility (not used in new UI)
-class _MainMenuGame extends FlameGame {
-  final VoidCallback onSinglePlayer;
-  final VoidCallback onMultiPlayer;
-  final VoidCallback onDevelopers;
-
-  _MainMenuGame({
-    required this.onSinglePlayer,
-    required this.onMultiPlayer,
-    required this.onDevelopers,
-  });
-
-  @override
-  Color backgroundColor() => GameConstants.backgroundColor;
-
-  @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-    // Don't add UI components here - wait for layout
-  }
-
-  @override
-  void onGameResize(Vector2 size) {
-    super.onGameResize(size);
-    // Clear existing components when resizing
-    removeAll(children.where((component) =>
-    component is TextComponent || component is MenuButton).toList());
-    _setupUI();
-  }
-
-  @override
-  void onMount() {
-    super.onMount();
-    // Setup UI once the game is mounted and has layout
-    if (hasLayout) {
-      _setupUI();
-    }
-  }
-
-  void _setupUI() {
-    if (!hasLayout) return;
-
-    final centerX = size.x / 2;
-    final buttonWidth = size.x * GameConstants.menuButtonWidth;
-    final buttonHeight = size.y * GameConstants.menuButtonHeight;
-    final buttonSpacing = buttonHeight + 20;
-
-    // Title
-    add(TextComponent(
-      text: 'Rock Paper Scissors',
-      position: Vector2(centerX, size.y * 0.2),
-      anchor: Anchor.center,
-      textRenderer: TextPaint(
-        style: TextStyle(
-          color: GameConstants.highlightColor,
-          fontSize: size.y * 0.05, // 5% of screen height
-          fontWeight: FontWeight.bold,
-        ),
-      ),
-    ));
-
-    // Single Player button
-    add(MenuButton(
-      text: 'Player vs AI',
-      onPressed: onSinglePlayer,
-      position: Vector2(centerX, size.y * 0.4),
-      size: Vector2(buttonWidth, buttonHeight),
-    ));
-
-    // Multi Player button
-    add(MenuButton(
-      text: 'Player vs Player',
-      onPressed: onMultiPlayer,
-      position: Vector2(centerX, size.y * 0.4 + buttonSpacing),
-      size: Vector2(buttonWidth, buttonHeight),
-    ));
-
-    // Developers button
-    add(MenuButton(
-      text: 'Developers',
-      onPressed: onDevelopers,
-      position: Vector2(centerX, size.y * 0.4 + buttonSpacing * 2),
-      size: Vector2(buttonWidth, buttonHeight),
-    ));
   }
 }
 

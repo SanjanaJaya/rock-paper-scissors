@@ -95,3 +95,53 @@ class MenuButton extends RectangleComponent with TapCallbacks {
     super.onTapCancel(event);
   }
 }
+
+// Flutter widget version of the menu button for consistent styling
+class FlutterMenuButton extends StatelessWidget {
+  final String text;
+  final VoidCallback onTap;
+  final double? width;
+  final double? height;
+
+  const FlutterMenuButton({
+    Key? key,
+    required this.text,
+    required this.onTap,
+    this.width = 260,
+    this.height = 60,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: EdgeInsets.symmetric(vertical: 10),
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/images/button.png'),
+            fit: BoxFit.fill,
+          ),
+        ),
+        alignment: Alignment.center,
+        child: Text(
+          text,
+          style: TextStyle(
+            fontSize: 20,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+            shadows: [
+              Shadow(
+                offset: Offset(1, 1),
+                blurRadius: 2,
+                color: Colors.black,
+              )
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
