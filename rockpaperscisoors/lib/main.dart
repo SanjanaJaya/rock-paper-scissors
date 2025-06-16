@@ -60,81 +60,74 @@ class _MainMenuScreenState extends State<MainMenuScreen> {
         return Dialog(
           backgroundColor: Colors.transparent,
           child: Container(
+            width: 300,
+            height: 400,
+            padding: EdgeInsets.all(30),
             decoration: BoxDecoration(
-              image: DecorationImage(
-                image: AssetImage('assets/images/background_menu.png'),
-                fit: BoxFit.cover,
-              ),
+              color: Colors.black.withOpacity(0.8),
               borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.white.withOpacity(0.3), width: 2),
             ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: Container(
-                width: 300,
-                height: 400,
-                padding: EdgeInsets.all(20),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      'SELECT DIFFICULTY',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.white,
-                        shadows: [
-                          Shadow(
-                            offset: Offset(2, 2),
-                            blurRadius: 3,
-                            color: Colors.black54,
-                          ),
-                        ],
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'SELECT DIFFICULTY',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white,
+                    shadows: [
+                      Shadow(
+                        offset: Offset(2, 2),
+                        blurRadius: 3,
+                        color: Colors.black54,
                       ),
-                    ),
-                    SizedBox(height: 30),
-                    GameMenuButton(
-                      text: 'EASY',
-                      onTap: () {
-                        Navigator.pop(context);
-                        game.setDifficulty(Difficulty.easy);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GameScreen(game: game),
-                          ),
-                        );
-                      },
-                    ),
-                    GameMenuButton(
-                      text: 'MEDIUM',
-                      onTap: () {
-                        Navigator.pop(context);
-                        game.setDifficulty(Difficulty.medium);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GameScreen(game: game),
-                          ),
-                        );
-                      },
-                    ),
-                    GameMenuButton(
-                      text: 'HARD',
-                      onTap: () {
-                        Navigator.pop(context);
-                        game.setDifficulty(Difficulty.hard);
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => GameScreen(game: game),
-                          ),
-                        );
-                      },
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+                SizedBox(height: 30),
+                GameMenuButton(
+                  text: 'EASY',
+                  onTap: () {
+                    Navigator.pop(context);
+                    game.setDifficulty(Difficulty.easy);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(game: game),
+                      ),
+                    );
+                  },
+                ),
+                GameMenuButton(
+                  text: 'MEDIUM',
+                  onTap: () {
+                    Navigator.pop(context);
+                    game.setDifficulty(Difficulty.medium);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(game: game),
+                      ),
+                    );
+                  },
+                ),
+                GameMenuButton(
+                  text: 'HARD',
+                  onTap: () {
+                    Navigator.pop(context);
+                    game.setDifficulty(Difficulty.hard);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => GameScreen(game: game),
+                      ),
+                    );
+                  },
+                ),
+              ],
             ),
           ),
         );
