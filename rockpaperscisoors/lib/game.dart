@@ -7,6 +7,7 @@ import 'package:flame/game.dart';
 import 'package:flame/events.dart';
 import 'package:flame/sprite.dart';
 import 'package:flame/effects.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'components/choice_button.dart';
 import 'constants.dart';
@@ -35,12 +36,20 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
   Difficulty difficulty = Difficulty.medium;
   GameChoice? lastPlayerChoice;
 
+  // Audio management properties
+  bool _audioInitialized = false;
+  bool _musicEnabled = true;
+  bool _soundEnabled = true;
+
   @override
   Color backgroundColor() => GameConstants.backgroundColor;
 
   @override
   Future<void> onLoad() async {
     await super.onLoad();
+
+    // Initialize audio first
+    await _initializeAudio();
 
     // Add background image
     background = SpriteComponent(
@@ -244,6 +253,55 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     await _initializeStars();
   }
 
+  Future<void> _initializeAudio() async {
+    try {
+      // Preload all audio files
+      await FlameAudio.audioCache.loadAll([
+        GameConstants.backgroundMusic,
+        GameConstants.winSound,
+        GameConstants.loseSound,
+        GameConstants.drawSound,
+        GameConstants.buttonClickSound,
+      ]);
+
+      // Initialize background music
+      if (_musicEnabled) {
+        await FlameAudio.bgm.play(GameConstants.backgroundMusic, volume: 0.3);
+      }
+
+      _audioInitialized = true;
+      debugPrint('Audio initialized successfully');
+    } catch (e) {
+      debugPrint('Error initializing audio: $e');
+      _audioInitialized = false;
+    }
+  }
+
+  void toggleMusic() {
+    _musicEnabled = !_musicEnabled;
+    if (_audioInitialized) {
+      if (_musicEnabled) {
+        FlameAudio.bgm.play(GameConstants.backgroundMusic, volume: 0.3);
+      } else {
+        FlameAudio.bgm.stop();
+      }
+    }
+  }
+
+  void toggleSound() {
+    _soundEnabled = !_soundEnabled;
+  }
+
+  Future<void> _playSound(String soundPath, {double volume = 0.7}) async {
+    if (_audioInitialized && _soundEnabled) {
+      try {
+        await FlameAudio.play(soundPath, volume: volume);
+      } catch (e) {
+        debugPrint('Error playing sound $soundPath: $e');
+      }
+    }
+  }
+
   Future<void> _initializeStars() async {
     final starSize = size.y * 0.035; // 3.5% of screen height
     final starSpacing = size.x * 0.10; // 8% of screen width for more space
@@ -329,6 +387,9 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     isAnimating = true;
     lastPlayerChoice = playerChoice;
 
+    // Play button click sound
+    await _playSound(GameConstants.buttonClickSound, volume: 0.8);
+
     try {
       // Show player choice animation
       final playerAnimation = await _createChoiceAnimation(playerChoice, false);
@@ -369,7 +430,8 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
           ),
         );
 
-        // Add celebration effect
+        // Play win sound and add celebration effect
+        await _playSound(GameConstants.winSound, volume: 0.8);
         resultText.add(
           ScaleEffect.by(
             Vector2.all(1.3),
@@ -397,6 +459,9 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
             ],
           ),
         );
+
+        // Play lose sound
+        await _playSound(GameConstants.loseSound, volume: 0.8);
       } else {
         resultText.text = '🤝 It\'s a tie! 🤝';
         resultText.textRenderer = TextPaint(
@@ -413,6 +478,9 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
             ],
           ),
         );
+
+        // Play draw sound
+        await _playSound(GameConstants.drawSound, volume: 0.6);
       }
 
       playerScoreText.text = 'Score: $playerScore';
@@ -441,7 +509,8 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         restartText.text = '✨ Tap anywhere to play again! ✨';
         add(RestartButton(onPressed: resetGame, size: size));
 
-        // Add victory animation
+        // Play victory sound and add victory animation
+        await _playSound(GameConstants.winSound, volume: 1.0);
         resultText.add(
           ScaleEffect.by(
             Vector2.all(1.5),
@@ -473,6 +542,9 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
         gameStatusText.text = '💀 GAME OVER! 💀';
         restartText.text = '🔄 Tap anywhere for revenge! 🔄';
         add(RestartButton(onPressed: resetGame, size: size));
+
+        // Play game over sound
+        await _playSound(GameConstants.loseSound, volume: 1.0);
       }
     } catch (e) {
       debugPrint('Error in makeChoice: $e');
@@ -547,10 +619,22 @@ class RockPaperScissorsGame extends FlameGame with HasKeyboardHandlerComponents,
     restartText.text = '';
     await _updateStars();
 
+    // Play restart sound
+    await _playSound(GameConstants.buttonClickSound, volume: 0.6);
+
     // Remove any restart buttons
     children.whereType<RestartButton>().forEach((button) {
       button.removeFromParent();
     });
+  }
+
+  @override
+  void onRemove() {
+    // Clean up audio when game is removed
+    if (_audioInitialized) {
+      FlameAudio.bgm.stop();
+    }
+    super.onRemove();
   }
 
   String getChoiceName(GameChoice choice) {

@@ -36,6 +36,13 @@ class GameConstants {
   static const String scissorsAnimationAsset = 'scissors_animation.png';
   static const String starAsset = 'star.png';
   static const String emptyStarAsset = 'empty_star.png';
+
+  // Audio assets
+  static const String backgroundMusic = 'background_music.ogg';
+  static const String winSound = 'win.ogg';
+  static const String loseSound = 'lose.ogg';
+  static const String drawSound = 'draw.ogg';
+  static const String buttonClickSound = 'click.ogg';
 }
 
 enum GameChoice { rock, paper, scissors }

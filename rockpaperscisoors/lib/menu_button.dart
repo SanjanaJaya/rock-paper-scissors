@@ -1,6 +1,7 @@
 // menu_button.dart
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/material.dart';
 import 'package:rockpaperscisoors/constants.dart';
 
@@ -78,6 +79,7 @@ class MenuButton extends RectangleComponent with TapCallbacks {
 
   @override
   void onTapDown(TapDownEvent event) {
+    FlameAudio.play(GameConstants.buttonClickSound, volume: 0.7);
     _isPressed = true;
     onPressed();
     super.onTapDown(event);
@@ -114,7 +116,10 @@ class FlutterMenuButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        FlameAudio.play(GameConstants.buttonClickSound, volume: 0.7);
+        onTap();
+      },
       child: Container(
         margin: EdgeInsets.symmetric(vertical: 10),
         width: width,
